@@ -65,12 +65,6 @@ This prints panel coordinates to the terminal and optionally writes a `debug.png
 
 ---
 
-## 🧩 Full Program Code
-
-*(Same as the `detect_panels_v22_refined.py` you ran successfully.)*
-
----
-
 ## 🧠 Code Walkthrough (with examples)
 
 ### 1️⃣ Imports and type alias
