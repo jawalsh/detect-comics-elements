@@ -126,13 +126,40 @@ def detect_panels_v22_refined(image_path: str) -> List[Rect]:
 # --------------------------- draw & CLI ---------------------------
 
 def _draw(image_path: str, rects: List[Rect], out_path: str):
-    img=cv2.imread(image_path,cv2.IMREAD_COLOR)
-    if img is None: raise FileNotFoundError(image_path)
-    for i,(x1,y1,x2,y2) in enumerate(rects,start=1):
-        cv2.rectangle(img,(x1,y1),(x2,y2),(0,255,0),3)
-        cv2.putText(img,str(i),(x1+6,y1+28),cv2.FONT_HERSHEY_SIMPLEX,1.0,(0,0,0),3,cv2.LINE_AA)
-        cv2.putText(img,str(i),(x1+6,y1+28),cv2.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),1,cv2.LINE_AA)
-    cv2.imwrite(out_path,img)
+    img = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    if img is None:
+        raise FileNotFoundError(image_path)
+    H, W = img.shape[:2]
+
+    # Scale text to image size (works from ~1000px to 8000px tall scans)
+    def label_style():
+        base = min(H, W) / 1000.0
+        fs = max(0.9, min(3.5, 1.1 * base))             # font scale
+        th = max(2, int(round(fs * 2)))                 # text thickness
+        return fs, th
+
+    for i, (x1, y1, x2, y2) in enumerate(rects, start=1):
+        # Panel rectangle
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), max(2, int(min(H, W) / 800)))
+
+        # Label position (clamped inside image)
+        fs, th = label_style()
+        label = str(i)
+        (tw, th_text), baseline = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, fs, th)
+        tx = max(6, min(x1 + 10, W - tw - 6))
+        ty = max(6 + th_text, min(y1 + 10 + th_text, H - 6))
+
+        # Solid background for readability
+        pad = 6
+        bg_tl = (tx - pad, ty - th_text - baseline - pad)
+        bg_br = (tx + tw + pad, ty + pad)
+        cv2.rectangle(img, bg_tl, bg_br, (0, 0, 0), thickness=-1)
+
+        # Foreground text (high contrast)
+        cv2.putText(img, label, (tx, ty),
+                    cv2.FONT_HERSHEY_SIMPLEX, fs, (0, 255, 0), th, cv2.LINE_AA)
+
+    cv2.imwrite(out_path, img)
 
 def main():
     ap=argparse.ArgumentParser(description="Detect comic panels (v2.2 refined).")
