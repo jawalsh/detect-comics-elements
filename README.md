@@ -1,4 +1,4 @@
-# Comic Panel Detector (v2.2‑refined): Full Beginner Guide with Line‑by‑Line Walkthrough
+# Comics Element Detector
 
 This guide introduces a Python program that detects rectangular **comic panels** in a scanned page image and outputs each panel’s bounding box as `[x1, y1, x2, y2]`. It also draws an optional debug overlay so you can verify detections visually. The document includes **installation instructions**, **how to run**, the **entire program code**, and a **chunk‑by‑chunk walkthrough** explaining what every important part does in plain language.
 
