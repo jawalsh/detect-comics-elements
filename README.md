@@ -52,6 +52,8 @@ python detect_panels_v22_refined.py page.jpg --draw debug.png
 
 This prints panel coordinates to the terminal and optionally writes a `debug.png` overlay with green rectangles.
 
+![Sample png output with panels highlighted and numbered.](samples/output.png)
+
 ---
 
 ## 📚 Libraries used
